@@ -1,0 +1,30 @@
+services:
+  # ====================================================================
+  # VERSI AMAN - Deployment Publik (Portal Akademik Hardened)
+  # ====================================================================
+  - type: web
+    name: ksi-m5-aman
+    runtime: node
+    buildCommand: npm install && npm run init-db
+    startCommand: node aman/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # ====================================================================
+  # VERSI RENTAN - Lab Terkontrol (Diproteksi HTTP Basic Auth)
+  # ====================================================================
+  - type: web
+    name: ksi-m5-rentan
+    runtime: node
+    buildCommand: npm install && npm run init-db
+    startCommand: node rentan/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LAB_PROTECTED
+        value: "true"
+      - key: LAB_USER
+        sync: false
+      - key: LAB_PASS
+        sync: false

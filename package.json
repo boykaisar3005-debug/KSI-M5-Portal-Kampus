@@ -5,6 +5,7 @@
   "main": "rentan/server.js",
   "scripts": {
     "init-db": "node database/init-db.js",
+    "start": "node aman/server.js",
     "start:rentan": "node rentan/server.js",
     "start:aman": "node aman/server.js",
     "test:security": "node test-security.js"

@@ -24,13 +24,39 @@ const fs = require('fs');
 const { DatabaseSync } = require('node:sqlite');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+
+// Gatekeeper Lab Terkontrol: Proteksi HTTP Basic Auth untuk Versi Rentan di Lingkungan Online
+const LAB_PROTECTION = process.env.LAB_PROTECTED === 'true' || process.env.NODE_ENV === 'production';
+const LAB_USER = process.env.LAB_USER || 'praktikan_ksi';
+const LAB_PASS = process.env.LAB_PASS || 'lab-terbatas-2026';
+
+if (LAB_PROTECTION) {
+  app.use((req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Laboratorium Terisolasi KSI - Akses Terbatas"');
+      return res.status(401).send('401 Unauthorized: Akses laboratorium rentan dibatasi untuk penguji berwenang.');
+    }
+    const [scheme, credentials] = authHeader.split(' ');
+    if (scheme !== 'Basic' || !credentials) {
+      return res.status(401).send('Format autentikasi tidak valid.');
+    }
+    const decoded = Buffer.from(credentials, 'base64').toString('utf-8');
+    const [user, pass] = decoded.split(':');
+    if (user === LAB_USER && pass === LAB_PASS) {
+      return next();
+    }
+    res.setHeader('WWW-Authenticate', 'Basic realm="Laboratorium Terisolasi KSI - Akses Terbatas"');
+    return res.status(401).send('401 Unauthorized: Kredensial gerbang lab salah.');
+  });
+}
 
 // Path database terisolasi untuk versi rentan
 const dbPath = path.join(__dirname, '..', 'database', 'rentan.sqlite');
 if (!fs.existsSync(dbPath)) {
-  console.error('[ERROR] Database rentan.sqlite belum dibuat. Jalankan `npm run init-db` terlebih dahulu.');
-  process.exit(1);
+  console.log('[INFO] Database rentan.sqlite belum ada, menginisialisasi otomatis...');
+  require(path.join(__dirname, '..', 'database', 'init-db.js'));
 }
 const db = new DatabaseSync(dbPath);
 

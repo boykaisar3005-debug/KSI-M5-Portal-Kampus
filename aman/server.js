@@ -24,13 +24,16 @@ const bcrypt = require('bcryptjs');
 const { DatabaseSync } = require('node:sqlite');
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
+
+// Percayai reverse proxy saat berjalan di cloud (PaaS)
+app.set('trust proxy', 1);
 
 // Path database terisolasi untuk versi aman
 const dbPath = path.join(__dirname, '..', 'database', 'aman.sqlite');
 if (!fs.existsSync(dbPath)) {
-  console.error('[ERROR] Database aman.sqlite belum dibuat. Jalankan `npm run init-db` terlebih dahulu.');
-  process.exit(1);
+  console.log('[INFO] Database aman.sqlite belum ada, menginisialisasi otomatis...');
+  require(path.join(__dirname, '..', 'database', 'init-db.js'));
 }
 const db = new DatabaseSync(dbPath);
 
@@ -377,6 +380,7 @@ app.post('/login', (req, res) => {
   res.cookie('session_id', newSessionId, {
     httpOnly: true,
     sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
     path: '/'
   });
 

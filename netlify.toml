@@ -1,0 +1,16 @@
+# Default Netlify config: versi AMAN publik.
+# Untuk versi RENTAN lab terkontrol, gunakan netlify-rentan.toml saat membuat site kedua.
+[build]
+  command = "npm install"
+  functions = "netlify/functions"
+  publish = "netlify/empty"
+
+[build.environment]
+  NODE_ENV = "production"
+  APP_VERSION = "aman"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/aman/:splat"
+  status = 200
+  force = true

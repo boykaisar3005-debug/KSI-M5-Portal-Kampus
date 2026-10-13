@@ -25,6 +25,9 @@ const { DatabaseSync } = require('node:sqlite');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const IS_NETLIFY = !!process.env.NETLIFY;
+const DB_DIR = process.env.DB_DIR || (IS_NETLIFY ? '/tmp/ksi-m5-db' : path.join(__dirname, '..', 'database'));
+const UPLOAD_DIR = process.env.UPLOAD_DIR || (IS_NETLIFY ? '/tmp/ksi-m5-rentan-uploads' : path.join(__dirname, 'uploads'));
 
 // Gatekeeper Lab Terkontrol: Proteksi HTTP Basic Auth untuk Versi Rentan di Lingkungan Online
 const LAB_PROTECTION = process.env.LAB_PROTECTED === 'true' || process.env.NODE_ENV === 'production';
@@ -53,15 +56,16 @@ if (LAB_PROTECTION) {
 }
 
 // Path database terisolasi untuk versi rentan
-const dbPath = path.join(__dirname, '..', 'database', 'rentan.sqlite');
+const dbPath = path.join(DB_DIR, 'rentan.sqlite');
 if (!fs.existsSync(dbPath)) {
   console.log('[INFO] Database rentan.sqlite belum ada, menginisialisasi otomatis...');
+  process.env.DB_DIR = DB_DIR;
   require(path.join(__dirname, '..', 'database', 'init-db.js'));
 }
 const db = new DatabaseSync(dbPath);
 
 // Konfigurasi upload file tugas
-const uploadDir = path.join(__dirname, 'uploads');
+const uploadDir = UPLOAD_DIR;
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -735,7 +739,10 @@ app.post('/admin/users/toggle', requireAuth, (req, res) => {
   res.redirect('/admin/users?msg=Status+pengguna+berhasil+diubah');
 });
 
-// Jalankan Server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[SERVER RENTAN] Berjalan di http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[SERVER RENTAN] Berjalan di http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

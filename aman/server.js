@@ -25,14 +25,18 @@ const { DatabaseSync } = require('node:sqlite');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+const IS_NETLIFY = !!process.env.NETLIFY;
+const DB_DIR = process.env.DB_DIR || (IS_NETLIFY ? '/tmp/ksi-m5-db' : path.join(__dirname, '..', 'database'));
+const UPLOAD_DIR = process.env.UPLOAD_DIR || (IS_NETLIFY ? '/tmp/ksi-m5-aman-uploads' : path.join(__dirname, 'uploads'));
 
 // Percayai reverse proxy saat berjalan di cloud (PaaS)
 app.set('trust proxy', 1);
 
 // Path database terisolasi untuk versi aman
-const dbPath = path.join(__dirname, '..', 'database', 'aman.sqlite');
+const dbPath = path.join(DB_DIR, 'aman.sqlite');
 if (!fs.existsSync(dbPath)) {
   console.log('[INFO] Database aman.sqlite belum ada, menginisialisasi otomatis...');
+  process.env.DB_DIR = DB_DIR;
   require(path.join(__dirname, '..', 'database', 'init-db.js'));
 }
 const db = new DatabaseSync(dbPath);
@@ -41,7 +45,7 @@ const db = new DatabaseSync(dbPath);
 const sessions = new Map(); // sessionId -> { user, csrfToken, expiresAt }
 
 // Konfigurasi Upload Berkas yang Aman
-const uploadDir = path.join(__dirname, 'uploads');
+const uploadDir = UPLOAD_DIR;
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -969,7 +973,10 @@ app.post('/admin/users/toggle', requireAuth, requireRole('admin'), verifyCsrf, (
   res.redirect('/admin/users?msg=Status+pengguna+berhasil+diubah');
 });
 
-// Jalankan Server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[SERVER AMAN] Berjalan di http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[SERVER AMAN] Berjalan di http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

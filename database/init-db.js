@@ -9,10 +9,13 @@ const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
 const bcrypt = require('bcryptjs');
 
-const dbDir = path.join(__dirname);
+const dbDir = process.env.DB_DIR || path.join(__dirname);
 const rootDir = path.join(__dirname, '..');
-const schemaSql = fs.readFileSync(path.join(dbDir, 'schema.sql'), 'utf-8');
-const seedSql = fs.readFileSync(path.join(dbDir, 'seed.sql'), 'utf-8');
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+const schemaSql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
+const seedSql = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf-8');
 
 // Akun sintetis
 const usersRentan = [

@@ -1,0 +1,15 @@
+[build]
+  command = "npm install"
+  functions = "netlify/functions"
+  publish = "netlify/empty"
+
+[build.environment]
+  NODE_ENV = "production"
+  LAB_PROTECTED = "true"
+  APP_VERSION = "rentan"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/rentan/:splat"
+  status = 200
+  force = true

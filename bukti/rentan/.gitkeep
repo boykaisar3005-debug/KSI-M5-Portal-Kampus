@@ -1,0 +1,6 @@
+# Simpan tangkapan layar (screenshot) bukti pengujian versi rentan di folder ini.
+# Format penamaan yang disarankan:
+# 1-sqli-login-rentan.png
+# 2-idor-nilai-rentan.png
+# 3-xss-forum-rentan.png
+# 4-bruteforce-rentan.png

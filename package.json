@@ -1,0 +1,28 @@
+{
+  "name": "ksi-m5-portal-kampus",
+  "version": "1.0.0",
+  "description": "Laboratorium Praktikum Keamanan Sistem Informasi (KSI) - Portal Kampus Fiktif (Versi Rentan vs Aman)",
+  "main": "rentan/server.js",
+  "scripts": {
+    "init-db": "node database/init-db.js",
+    "start:rentan": "node rentan/server.js",
+    "start:aman": "node aman/server.js",
+    "test:security": "node test-security.js"
+  },
+  "keywords": [
+    "ksi",
+    "security-lab",
+    "sqli",
+    "idor",
+    "xss",
+    "brute-force"
+  ],
+  "author": "Praktikan KSI",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "multer": "^2.0.2"
+  }
+}

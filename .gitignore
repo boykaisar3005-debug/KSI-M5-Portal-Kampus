@@ -1,0 +1,39 @@
+# Dependensi Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Berkas Environment & Kredensial Sensitif
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Database Runtime SQLite & Jurnal (Dapat di-generate ulang dengan 'npm run init-db')
+# File schema.sql dan seed.sql tetap terlacak di repositori
+*.sqlite
+*.sqlite3
+*.db
+database/*.sqlite
+database/*.sqlite3
+database/*.db
+database/*.sqlite-wal
+database/*.sqlite-shm
+database/*.sqlite-journal
+
+# File Unggahan Tugas Mahasiswa (Hanya simpan struktur folder via .gitkeep)
+rentan/uploads/*
+!rentan/uploads/.gitkeep
+aman/uploads/*
+!aman/uploads/.gitkeep
+
+# File Sistem Operasi & Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.bak

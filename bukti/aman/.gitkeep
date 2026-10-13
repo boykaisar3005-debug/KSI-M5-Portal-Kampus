@@ -1,0 +1,6 @@
+# Simpan tangkapan layar (screenshot) bukti pengujian versi aman di folder ini.
+# Format penamaan yang disarankan:
+# 1-sqli-login-aman.png
+# 2-idor-nilai-aman.png
+# 3-xss-forum-aman.png
+# 4-bruteforce-aman.png

@@ -11,6 +11,6 @@
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/aman/:splat"
+  to = "/.netlify/functions/ksi-aman/:splat"
   status = 200
   force = true

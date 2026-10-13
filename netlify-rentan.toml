@@ -10,6 +10,6 @@
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/rentan/:splat"
+  to = "/.netlify/functions/ksi-rentan/:splat"
   status = 200
   force = true
